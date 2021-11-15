@@ -3,42 +3,83 @@ import json
 
 slovicka = dict()
 
+
+def enter_file():
+    enter = input('Napište název souboru: ')
+    try:
+        a_file = open(f'{enter}.json', 'r')
+        json.loads(a_file.read())
+        a_file.close()
+    except:
+        b_file = open(enter, 'w+')
+        json.dump(slovicka, b_file)
+        b_file.close()
+
+
 def vlozeni_slovicek():
     while True:
         vlozit_key = input('Vložte libovolné slovíčko: ')
         if vlozit_key == '':
-            #print(slovicka)
             break
         else:
             vlozit_value = input('Vložte jeho překlad: ')
             slovicka[vlozit_key] = vlozit_value
-        #for key, value in slovicka.items():
-            #print('Slovo: {}, Preklad: {}'.format(key, value))
-        #print(slovicka)
-vlozeni_slovicek()
+
 
 def file_write():
-    a_file = open('data.json','w')
-    json.dump(slovicka,a_file)
+    try:
+        a_file = open('data.json','w')
+        json.dump(slovicka,a_file)
+        a_file.close()
+    except:
+        print('Chyba, nemáte povolení měnit text v souboru.')
+        exit()
+
+
+def file_append():
+    slovicka_append = dict()
+
+    while True:
+        vlozit_key = input('Vložte libovolné slovíčko: ')
+        if vlozit_key == '':
+            break
+        else:
+            vlozit_value = input('Vložte jeho překlad: ')
+            slovicka[vlozit_key] = vlozit_value
+            slovicka_append[vlozit_key] = vlozit_value
+    with open("data.json", "r+") as file:
+        data = json.load(file)
+        data.update(slovicka_append)
+        file.seek(0)
+        json.dump(data, file)
+    exit()
+
+def file_open():
+    a_file = open('data.json', 'r')
+    output = json.loads(a_file.read())
+    slovicka = output
+    print(output)
     a_file.close()
-file_write()
-
-a_file = open('data.json','r')
-output = a_file.read()
-# print(output)
 
 
+vstup_3 = input('Chcete změnit slovník? y/n ')
+if vstup_3 == 'y':
+    enter_file()
+else:
+    vstup = input('Chcete provádět změny ve slovníku? y/n ')
+    if vstup == 'y':
+        vstup_2 = input('Chcete slovník přepsat, nebo doplnit? p/d ')
+        if vstup_2 =='p':
+            vlozeni_slovicek()
+            file_write()
 
-"""
-slovicka = {'dobrodružný':'abenteuerlich', 'jiný, ostatní':'ander', 'horský průvodce':'der Bergfuhrer',
-            'jedinečný':"einzigartig", "zkušený":"erfahren", "vrchol":"der Gipfel",
-            "milovník, milenec":"der Liebhaber", "spisovatel": "der Schriftseller",
-            "cesta, stezka":"die Strecke", "různé druhy sportu":"verschiedene Sportarten",
-            "náročný":"anspruchsvoll", "vyznat se":"sich aus/kennen", "oba":"beide",
-            "horolezec":"der Bergsteiger", "někteří, nějací":"einige", "soupeř, "
-            "protivník":"der Gegner", "túra":"der Tour","poskytnout první pomoc":"Erste Hilfe leisten",
-            "málo zkušeností":"wenige Erfahrungen", "mnozí sportovci":"manche Sportler"}
-"""
+        elif vstup_2 == 'd':
+            file_append()
+            file_open()
+    else:
+        file_open()
+
+
 key_list = list(slovicka)
 
 random.shuffle(key_list)
@@ -48,32 +89,34 @@ total_count = 0
 count = 0
 for key in key_list:
     int = input(f'{key} = ')
-    total_count = total_count + 1
+    total_count += 1
     if int == slovicka[key]:
-        count = count + 1
+        count += 1
         print('Správně')
     else:
         print(f"Špatně, správná odpověď je '{slovicka[key]}'")
         spatne_slovicka.append(int)
-        # int_2 = input('Opiš to slovíčko: ')
-        # if int_2 != v:
-        # print('Ty jsi ale debil!')
 
 print(f'Vaše špatné odpovědi: {spatne_slovicka}')
 print(f'Počet bodů je {count}/{total_count}')
-vysledek = ((count/total_count)*100)
-print(f'{vysledek}%')
-a = 90
-b = 80
-c = 70
-d = 60
-if vysledek >= a:
-    print('Tvoje známka je 1!')
-elif vysledek < a and vysledek >= b:
-    print('Tvoje znamka je 2!')
-elif vysledek < b and vysledek >= c:
-    print('Tvoje znamka je 3!')
-elif vysledek < c and vysledek >= d:
-    print('Tvoje znamka je 4!')
-elif vysledek < d:
-    print('Máš bůra!')
+
+if total_count == 0:
+    print('...')
+else:
+    vysledek = ((count / total_count) * 100)
+    print(f'{vysledek}%')
+
+    a = 90.5
+    b = 80
+    c = 70
+    d = 60
+    if vysledek >= a:
+        print('Tvoje známka je 1!')
+    elif vysledek < a and vysledek >= b:
+        print('Tvoje znamka je 2!')
+    elif vysledek < b and vysledek >= c:
+        print('Tvoje znamka je 3!')
+    elif vysledek < c and vysledek >= d:
+        print('Tvoje znamka je 4!')
+    elif vysledek < d:
+        print('Tvoje znamka je 5!')
