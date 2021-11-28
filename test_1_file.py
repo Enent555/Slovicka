@@ -11,9 +11,8 @@ def enter_file():
             slovicka = json.loads(a_file.read())
         return slovicka
     except:
-        with open(enter, 'w+') as b_file:
-            slovicka_1 = dict()
-            slovicka = dict(json.dump(slovicka_1, b_file))
+        with open(enter, 'w') as b_file:
+            json.dumps(slovicka)
             return slovicka
 
 
@@ -27,34 +26,25 @@ def vlozeni_slovicek():
             slovicka[vlozit_key] = vlozit_value
 
 
-def file_write():
+def file_write(souborek):
     try:
-        a_file = open('data.json', 'w')
+        a_file = open(souborek, 'w')
         json.dump(slovicka, a_file)
         a_file.close()
+        return slovicka
     except:
         print('Chyba, nemáte povolení měnit text v souboru.')
         exit()
 
 
-def file_append():
-    slovicka_append = dict()
-
-    while True:
-        vlozit_key = input('Vložte libovolné slovíčko: ')
-        if vlozit_key == '':
-            break
-        else:
-            vlozit_value = input('Vložte jeho překlad: ')
-            slovicka[vlozit_key] = vlozit_value
-            slovicka_append[vlozit_key] = vlozit_value
-    with open("data.json", "r+") as file:
+def file_append(soubor):
+    with open(soubor, "r+") as file:
         data = json.load(file)
-        data.update(slovicka_append)
+        data.update(slovicka)
         file.seek(0)
         json.dump(data, file)
-    exit()
-
+        exit()
+        return slovicka
 
 def file_open(soubor):
     with open(soubor, 'r') as a_file:
@@ -64,18 +54,25 @@ def file_open(soubor):
 
 vstup_3 = input('Chcete změnit slovník? y/n ')
 if vstup_3 == 'y':
-    enter_file()
+    enter = input('Napište název souboru: ')
+    try:
+        slovicka = file_open(enter)
+    except:
+        vlozeni_slovicek()
+        file_write(enter)
+
 else:
     vstup = input('Chcete provádět změny ve slovníku? y/n ')
     if vstup == 'y':
         vstup_2 = input('Chcete slovník přepsat, nebo doplnit? p/d ')
         if vstup_2 == 'p':
             vlozeni_slovicek()
-            file_write()
+            file_write('data.json')
 
         elif vstup_2 == 'd':
-            file_append()
-            file_open()
+            vlozeni_slovicek()
+            file_append('data.json')
+
     else:
         slovicka = file_open('data.json')
 
